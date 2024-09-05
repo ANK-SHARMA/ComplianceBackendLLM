@@ -2,6 +2,7 @@ package com.compliance.compliancetestllm.controller;
 
 import com.compliance.compliancetestllm.service.ComplianceService;
 import com.compliance.compliancetestllm.service.WebService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,15 @@ public class ComplianceController {
     private final WebService webService;
     private final ComplianceService complianceService;
 
-    @GetMapping("/")
-    public String index() {
-        return "Service is Up";
-    }
-
+    @Autowired
     public ComplianceController(WebService webService, ComplianceService complianceService) {
         this.webService = webService;
         this.complianceService = complianceService;
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "Service is Up";
     }
 
     @GetMapping("/compliance/check")

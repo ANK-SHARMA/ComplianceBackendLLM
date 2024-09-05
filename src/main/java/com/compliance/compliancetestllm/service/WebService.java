@@ -1,5 +1,9 @@
 package com.compliance.compliancetestllm.service;
 
+import com.compliance.compliancetestllm.client.BasicOpenAIClient;
+import com.compliance.compliancetestllm.client.OpenAIClient;
+import com.compliance.compliancetestllm.client.decorator.LoggingOpenAIClientDecorator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,8 +17,12 @@ public class WebService {
     private final RestTemplate restTemplate;
     private String url;
 
-    public WebService(RestTemplate restTemplate) {
+    private OpenAIClient openAIClient;
+
+    @Autowired
+    public WebService(RestTemplate restTemplate, BasicOpenAIClient basicOpenAIClient) {
         this.restTemplate = restTemplate;
+        this.openAIClient = new LoggingOpenAIClientDecorator(basicOpenAIClient);
     }
 
     public void setUrl(String url) {
@@ -22,13 +30,15 @@ public class WebService {
     }
 
     public String fetch() throws IOException {
-        // Fetching the webpage content
         return restTemplate.getForObject(url, String.class);
     }
 
     public String extractText(String html) {
-        // Extracting text using Jsoup
         Document doc = Jsoup.parse(html);
         return doc.body().text();
+    }
+
+    public String getOpenAICompletion(String prompt) {
+        return openAIClient.getCompletion(prompt);
     }
 }
